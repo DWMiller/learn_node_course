@@ -117,3 +117,14 @@ exports.getStoreBySlug = async (req, res, next) => {
     store,
   });
 };
+
+exports.getStoresByTag = async (req, res, next) => {
+  const tags = await Store.getTagsList();
+  const tag = req.params.tag;
+
+  res.render('tag', {
+    title: 'Tags',
+    tags,
+    tag,
+  });
+};
