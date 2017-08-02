@@ -210,3 +210,22 @@ exports.heartStore = async (req, res) => {
 
   res.json(user);
 };
+
+exports.heartPage = async (req, res) => {
+  //by store filters by hearts
+  // const stores = await Store.find({
+  //   _id: {
+  //     $in: req.user.hearts,
+  //   },
+  // });
+
+  //by populating hearts
+  const { hearts: stores } = await User.findOne(req.user._id).populate(
+    'hearts'
+  );
+
+  res.render('stores', {
+    title: 'Hearted Stores',
+    stores,
+  });
+};
