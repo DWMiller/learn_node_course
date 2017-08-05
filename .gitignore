@@ -1,7 +1,11 @@
 # Dependency directories
 node_modules/
+.DS_Store
+*.log
+haters/
 
 # dotenv environment variables file
-*.env
+variables.env
+variables.env.now
 
-public/uploads
+
