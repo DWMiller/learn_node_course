@@ -91,4 +91,49 @@ storeSchema.virtual('reviews', {
   foreignField: 'store',
 });
 
+function autopopulate(next) {
+  this.populate('reviews');
+  next();
+}
+
+storeSchema.pre('find', autopopulate);
+storeSchema.pre('findOne', autopopulate);
+
+storeSchema.statics.getTopStores = function() {
+  return this.aggregate([
+    {
+      $lookup: {
+        from: 'reviews',
+        localField: '_id',
+        foreignField: 'store',
+        as: 'reviews',
+      },
+    },
+    {
+      $match: {
+        'reviews.1': { $exists: true },
+      },
+    },
+    {
+      $project: {
+        slug: '$$ROOT.slug',
+        photo: '$$ROOT.photo',
+        name: '$$ROOT.name',
+        reviews: '$$ROOT.reviews',
+        averageRating: {
+          $avg: '$reviews.rating',
+        },
+      },
+    },
+    {
+      $sort: {
+        averageRating: -1,
+      },
+    },
+    {
+      $limit: 10,
+    },
+  ]);
+};
+
 module.exports = mongoose.model('Store', storeSchema);
